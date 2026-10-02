@@ -1,0 +1,17 @@
+import type {JournalEntry,Mood,Settings} from '../types';
+const keys={favorites:'pausa:favorites',journal:'pausa:journal',moods:'pausa:moods',settings:'pausa:settings',completed:'pausa:completed',dailyNotes:'pausa:dailyNotes'};
+const read=<T,>(key:string,fallback:T):T=>{try{const v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch{return fallback}};
+const write=(key:string,v:unknown)=>{try{localStorage.setItem(key,JSON.stringify(v));return true}catch{return false}};
+export const getFavorites=()=>read<string[]>(keys.favorites,[]);
+export const saveFavorite=(id:string)=>{const x=[...new Set([...getFavorites(),id])];write(keys.favorites,x);return x};
+export const removeFavorite=(id:string)=>{const x=getFavorites().filter(v=>v!==id);write(keys.favorites,x);return x};
+export const getJournalEntries=()=>read<JournalEntry[]>(keys.journal,[]);
+export const saveJournalEntry=(entry:JournalEntry)=>{const x=[entry,...getJournalEntries().filter(e=>e.id!==entry.id)];write(keys.journal,x);return x};
+export const deleteJournalEntry=(id:string)=>write(keys.journal,getJournalEntries().filter(e=>e.id!==id));
+export const getMoodHistory=()=>read<Mood[]>(keys.moods,[]);
+export const saveMood=(m:Mood)=>write(keys.moods,[m,...getMoodHistory().filter(x=>x.date!==m.date)]);
+export const getSettings=():Settings=>read<Settings>(keys.settings,{userName:'Belén',reminderTime:'21:00',notifications:false,theme:'light',textSize:'normal',animations:true,onboardingDone:false,morningIntentions:[]});
+export const saveSettings=(s:Settings)=>write(keys.settings,s);
+export const getCompleted=()=>read<string[]>(keys.completed,[]);
+export const markCompleted=(id:string)=>write(keys.completed,[...new Set([...getCompleted(),id])]);
+export const clearAll=()=>Object.values(keys).forEach(k=>localStorage.removeItem(k));

@@ -1,0 +1,1 @@
+export function OrganicMark({night=false}:{night?:boolean}){return <svg className="organic-mark" viewBox="0 0 120 80" aria-hidden="true"><path d="M8 65C38 46 43 23 78 12"/><path d="M37 45c-3-15-13-20-24-18M49 33c12-11 24-9 31-4M65 22c-1-10 4-16 12-19"/><circle cx="91" cy="18" r={night?6:3}/></svg>}
